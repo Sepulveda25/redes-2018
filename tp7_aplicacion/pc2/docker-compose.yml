@@ -1,0 +1,177 @@
+version: '2.1'
+
+services:
+  b2:
+    build: ./bgp/.
+    volumes:
+      - ./volumes/bgp/b2/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/bgp/b2/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/bgp/b2/bgpd.conf:/etc/quagga/bgpd.conf:ro
+      - ./volumes/bgp/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: bgp:20180426
+    container_name: router_b2
+    privileged: true
+    ports:
+      #admin
+      - 10201:2601
+      #ospf ipv6
+      - 10203:2606
+      #bgp
+      - 10204:2605
+    networks:
+      nb2r4:
+        ipv6_address: 2001:24::20
+      nb2r6:
+        ipv6_address: 2001:26::20
+      nb2r8:
+        ipv6_address: 2001:28::20
+      nb1b2:
+        ipv6_address: 2001:b12::20
+      nb2b3:
+        ipv6_address: 2001:b23::20
+
+  r4:
+    build: ./ospf/.
+    volumes:
+      - ./volumes/ospf/r4/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/ospf/r4/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/ospf/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419
+    container_name: router_r4
+    privileged: true
+    ports:
+      #admin
+      - 10411:2601
+      #ospf ipv6
+      - 10413:2606
+    networks:
+      nb2r4:
+        ipv6_address: 2001:24::40
+      nr4:
+        ipv6_address: 2001:44::41
+
+  r6:
+    build: ./ospf/.
+    volumes:
+      - ./volumes/ospf/r6/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/ospf/r6/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/ospf/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419
+    container_name: router_r6
+    privileged: true
+    ports:
+      #admin
+      - 10611:2601
+      #ospf ipv6
+      - 10613:2606
+    networks:
+      nb2r6:
+        ipv6_address: 2001:26::60
+      nr6r8:
+        ipv6_address: 2001:68::60
+      nr6h12:
+        ipv6_address: 2001:6c::60
+
+  r8:
+    build: ./ospf/.
+    volumes:
+      - ./volumes/ospf/r8/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/ospf/r8/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/ospf/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419
+    container_name: router_r8
+    privileged: true
+    ports:
+      #admin
+      - 10811:2601
+      #ospf ipv6
+      - 10813:2606
+    networks:
+      nb2r8:
+        ipv6_address: 2001:28::80
+      nr6r8:
+        ipv6_address: 2001:68::80
+      nr8h14:
+        ipv6_address: 2001:8c::80
+
+  h12: #configuracion host 12
+    build: ./host/.
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/scripts/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+      - ./volumes/scripts/h12/borrar_dgw.sh:/script/borrar_dgw.sh:ro
+    image: host:20180400 #imagen de docker a usar
+    container_name: host_h12
+    privileged: true
+    networks:
+      nr6h12: #direccion para la interfaz eth0 conectada a r6
+        ipv6_address: 2001:6c::12
+
+  h14: #configuracion host 14
+    build: ./host/.
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/scripts/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+      - ./volumes/scripts/h14/borrar_dgw.sh:/script/borrar_dgw.sh:ro
+    image: host:20180400 #imagen de docker a usar
+    container_name: host_h14
+    privileged: true
+    networks:
+      nr8h14: #direccion para la interfaz eth0 conectada a r8
+        ipv6_address: 2001:8c::14
+
+networks:
+  nb1b2:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:b12::/64  
+  nb2r4:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:24::/64
+  nb2r6:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:26::/64
+  nb2r8:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:28::/64
+  nr4:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:44::/64
+  nr6r8:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:68::/64
+  nr6h12:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:6c::/64
+  nr8h14:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:8c::/64

@@ -1,0 +1,363 @@
+version: '2.1'
+
+services:
+  r1: #configuracion router 1
+    build: ./router/.
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/quagga/r1/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r1/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r1/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419 #imagen de docker a usar
+    #command: bash "/script/borrar_dgw.sh"
+    privileged: true
+    ports: #mapeo de puertos "host:contenedor"
+      #admin
+      - 10011:2601
+      #ospf
+      - 10012:2604
+      #ospf ipv6
+      - 10013:2606
+    networks:
+      nr12: #direccion para la interfaz eth0 conectada a r2 
+        ipv6_address: 2001:1111:2222::10
+      nr13: #direccion para la interfaz eth1 conectada a r3
+        ipv6_address: 2001:1111:3333::10
+      nr15: #direccion para la interfaz eth2 conectada a r5
+        ipv6_address: 2001:1111:5555::10
+      nr17: #direccion para la interfaz eth3 conectada a r7
+        ipv6_address: 2001:1111:7777::10
+          
+  r2: #configuracion router 2
+    build: ./router/.
+    #command: /bin/sh -c "/script/borrar_dgw.sh"
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/quagga/r2/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r2/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r2/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419 #imagen de docker a usar
+    privileged: true
+    ports: #mapeo de puertos "host:contenedor"
+      #admin
+      - 10021:2601
+      #ospf
+      - 10022:2604
+      #ospf ipv6
+      - 10023:2606
+    networks:
+      nr12: #direccion para la interfaz eth0 conectada a r1
+        ipv6_address: 2001:1111:2222::20
+      nr24: #direccion para la interfaz eth1 conectada a r4 
+        ipv6_address: 2001:2222:4444::20
+      nr26: #direccion para la interfaz eth2 conectada a r6 
+        ipv6_address: 2001:2222:6666::20
+      nr28: #direccion para la interfaz eth3 conectada a r8 
+        ipv6_address: 2001:2222:8888::20
+
+  r3: #configuracion router 3
+    build: ./router/.
+    #command: bash -c "/script/borrar_dgw.sh"
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/quagga/r3/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r3/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r3/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419 #imagen de docker a usar
+    privileged: true
+    ports: #mapeo de puertos "host:contenedor"
+      #admin
+      - 10031:2601
+      #ospf
+      - 10032:2604
+      #ospf ipv6
+      - 10033:2606
+    networks:
+      nr13: #direccion para la interfaz eth0 conectada a r1
+        ipv6_address: 2001:1111:3333::30
+      nr33: #direccion para la interfaz eth1 conectada a r3 
+        ipv6_address: 2001:3333:3333::31
+      nr33: #direccion para la interfaz eth2 conectada a r3 
+        ipv6_address: 2001:3333:3333::32
+
+  r4: #configuracion router 4
+    build: ./router/.
+    #command: bash -c "/script/borrar_dgw.sh"
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/quagga/r4/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r4/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r4/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419 #imagen de docker a usar
+    privileged: true
+    ports: #mapeo de puertos "host:contenedor"
+      #admin
+      - 10041:2601
+      #ospf
+      - 10042:2604
+      #ospf ipv6
+      - 10043:2606
+    networks:
+      nr24: #direccion para la interfaz eth0 conectada a r2
+        ipv6_address: 2001:2222:4444::40
+      nr44: #direccion para la interfaz eth1 conectada a r4 
+        ipv6_address: 2001:4444:4444::41
+      nr44: #direccion para la interfaz eth2 conectada a r4 
+        ipv6_address: 2001:4444:4444::42
+
+  r5: #configuracion router 5
+    build: ./router/.
+    #command: bash -c "/script/borrar_dgw.sh"
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/quagga/r5/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r5/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r5/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419 #imagen de docker a usar
+    privileged: true
+    ports: #mapeo de puertos "host:contenedor"
+      #admin
+      - 10051:2601
+      #ospf
+      - 10052:2604
+      #ospf ipv6
+      - 10053:2606
+    networks:
+      nr15: #direccion para la interfaz eth0 conectada a r1
+        ipv6_address: 2001:1111:5555::50
+      nr57: #direccion para la interfaz eth1 conectada a r7 
+        ipv6_address: 2001:5555:7777::50
+      nr5c: #direccion para la interfaz eth2 conectada al host11 
+        ipv6_address: 2001:5555:cccc::50
+
+  r6: #configuracion router 6
+    build: ./router/.
+    #command: bash -c "/script/borrar_dgw.sh"
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/quagga/r6/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r6/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r6/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419 #imagen de docker a usar
+    privileged: true
+    ports: #mapeo de puertos "host:contenedor"
+      #admin
+      - 10061:2601
+      #ospf
+      - 10062:2604
+      #ospf ipv6
+      - 10063:2606
+    networks:
+      nr26: #direccion para la interfaz eth0 conectada a r2
+        ipv6_address: 2001:2222:6666::60
+      nr68: #direccion para la interfaz eth1 conectada a r8 
+        ipv6_address: 2001:6666:8888::60
+      nr6c: #direccion para la interfaz eth2 conectada al host12 
+        ipv6_address: 2001:6666:cccc::60
+
+  r7: #configuracion router 7
+    build: ./router/.
+    #command: bash -c "/script/borrar_dgw.sh"
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/quagga/r7/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r7/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r7/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419 #imagen de docker a usar
+    privileged: true
+    ports: #mapeo de puertos "host:contenedor"
+      #admin
+      - 10071:2601
+      #ospf
+      - 10072:2604
+      #ospf ipv6
+      - 10073:2606
+    networks:
+      nr17: #direccion para la interfaz eth0 conectada a r1
+        ipv6_address: 2001:1111:7777::70
+      nr57: #direccion para la interfaz eth1 conectada a r5 
+        ipv6_address: 2001:5555:7777::70
+      nr7c: #direccion para la interfaz eth2 conectada al host13
+        ipv6_address: 2001:7777:cccc::70
+
+  r8: #configuracion router 8
+    build: ./router/.
+    #command: bash -c "/script/borrar_dgw.sh"
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/quagga/r8/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r8/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r8/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419 #imagen de docker a usar
+    privileged: true
+    ports: #mapeo de puertos "host:contenedor"
+      #admin
+      - 10081:2601
+      #ospf
+      - 10082:2604
+      #ospf ipv6
+      - 10083:2606
+    networks:
+      nr28: #direccion para la interfaz eth0 conectada a r2
+        ipv6_address: 2001:2222:8888::80
+      nr68: #direccion para la interfaz eth1 conectada a r6 
+        ipv6_address: 2001:6666:8888::80
+      nr8c: #direccion para la interfaz eth2 conectada al host14 
+        ipv6_address: 2001:8888:cccc::80
+
+  h11: #configuracion host 11
+    build: ./host/.
+    #command: bash -c "/script/borrar_dgw.sh"
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+      - ./volumes/scripts/h11/borrar_dgw.sh:/script/borrar_dgw.sh:ro
+    image: hosts:20180400 #imagen de docker a usar
+    privileged: true
+    networks:
+      nr5c: #direccion para la interfaz eth0 conectada a r2
+        ipv6_address: 2001:5555:cccc::11
+
+  h12: #configuracion host 12
+    build: ./host/.
+    #command: bash -c "/script/borrar_dgw.sh"
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+      - ./volumes/scripts/h12/borrar_dgw.sh:/script/borrar_dgw.sh:ro
+    image: hosts:20180400 #imagen de docker a usar
+    privileged: true
+    networks:
+      nr6c: #direccion para la interfaz eth0 conectada a r2
+        ipv6_address: 2001:6666:cccc::12
+
+  h13: #configuracion host 13
+    build: ./host/.
+    #command: bash -c "/script/borrar_dgw.sh"
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+      - ./volumes/scripts/h13/borrar_dgw.sh:/script/borrar_dgw.sh:ro
+    image: hosts:20180400 #imagen de docker a usar
+    privileged: true
+    networks:
+      nr7c: #direccion para la interfaz eth0 conectada a r2
+        ipv6_address: 2001:7777:cccc::13
+
+  h14: #configuracion host 14
+    build: ./host/.
+    #command: bash -c "/script/borrar_dgw.sh"
+    volumes: #mapeo de directorios "host:contenedor"
+      - ./volumes/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+      - ./volumes/scripts/h14/borrar_dgw.sh:/script/borrar_dgw.sh:ro
+    image: hosts:20180400 #imagen de docker a usar
+    privileged: true
+    networks:
+      nr8c: #direccion para la interfaz eth0 conectada a r2
+        ipv6_address: 2001:8888:cccc::14
+     
+networks: #configuracion de bridges para conectar los routers 
+  nr12: #conector entre r1 y r2
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:1111:2222::/64
+  nr13: #conector entre r1 y r3
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:1111:3333::/64
+  nr15: #conector entre r1 y r5 
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:1111:5555::/64
+  nr17: #conector entre r1 y r7
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:1111:7777::/64
+  nr24: #conector entre r2 y r4
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:2222:4444::/64
+  nr26: #conector entre r2 y r6 
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:2222:6666::/64
+  nr28: #conector entre r2 y r8
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:2222:8888::/64
+  nr33: #conector entre r3 y r3
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:3333:3333::/64
+  nr44: #conector entre r4 y r4
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:4444:4444::/64
+  nr57: #conector entre r5 y r7
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:5555:7777::/64
+  nr5c: #conector entre r5 y h11
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:5555:cccc::/64
+  nr68: #conector entre r6 y r8
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:6666:8888::/64
+  nr6c: #conector entre r6 y h12
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:6666:cccc::/64
+  nr7c: #conector entre r7 y h13
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:7777:cccc::/64
+  nr8c: #conector entre r8 y h14
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:8888:cccc::/64
+
+

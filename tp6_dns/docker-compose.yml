@@ -1,0 +1,28 @@
+version: '2.1'
+
+services:
+  wm1:
+    build: .
+    #image: sameersbn/bind:latest
+    dns: 127.0.0.1
+    environment: 
+      - ROOT_PASSWORD=ubuntu # declaramos una variable de entorno
+    #ports:
+    #  - 2001:a:a:a::1:10000:10000
+    #  - 2001:a:a:a::1:53:53/udp
+    volumes:
+      - ./volumes/wm1_data:/data:rw 
+
+    privileged: true
+    networks:
+      nb1:
+        ipv6_address:  2001:a:a:a::2
+
+networks:
+  nb1:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet:  2001:a:a:a::/64
