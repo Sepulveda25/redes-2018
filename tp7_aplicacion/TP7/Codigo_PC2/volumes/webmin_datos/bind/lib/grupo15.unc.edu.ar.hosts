@@ -1,0 +1,28 @@
+$ttl 38400
+grupo15.unc.edu.ar.	IN	SOA	server. root.ubuntu.com. (
+			1529448000
+			10800
+			3600
+			604800
+			38400 )
+grupo15.unc.edu.ar.	IN	NS	server.
+nrSTRAPINGINX.nginx.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:3335::10
+nrR3NGINX.nginx.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:3334::20
+nrSTRAPINGINX.strapi.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:3335::20
+nrSTRAPINGINX.mongo.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:3335::30
+rb1b2.b1.grupo15.unc.edu.ar.	IN	AAAA	2001:b1b2::5
+nr3b1.b1.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:1113::5
+nr5b1.b1.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:1115::5
+nr7b1.b1.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:1117::5
+nr3b1.r3.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:1113::10
+nr3.r3.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:3333::10
+nrR3NGINX.r3.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:3334::10
+nr5b1.r5.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:1115::10
+nr5.r5.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:5555::10
+nr57.r5.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:5577::10
+nr7b1.r7.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:1117::10
+nr7.r7.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:7777::10
+nr57.r7.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:5577::20
+nr5.h11.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:5555::20
+nr7.h13.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:7777::20
+nr3.bind.grupo15.unc.edu.ar.	IN	AAAA	2001:aaaa:3333::20

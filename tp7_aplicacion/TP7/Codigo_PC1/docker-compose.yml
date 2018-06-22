@@ -1,0 +1,284 @@
+version: '2.1'
+
+services:
+
+  web:
+   image: nginx
+   container_name: nginx
+   volumes:
+    - ./volumes/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    - ./volumes/nginx/ssl:/etc/nginx/ssl
+   ports:
+    - "8080:80"
+   environment:
+    - NGINX_HOST=foobar.com
+    - NGINX_PORT=80
+   networks:
+     nrSTRAPINGINX:
+       ipv6_address: 2001:aaaa:3335::10
+     nrR3NGINX:
+       # NGINX con router r3
+       ipv6_address: 2001:aaaa:3334::20
+
+##para entrar por navegador por container nginx a strappi (no borrar default gateways)
+#http://[2001:aaaa:3335::10]:80
+##para entrar por navegador pero por el router 3 a strappi
+#http://[2001:aaaa:3334::20]:80   
+##para entrar por cualquier container por NGINX
+#docker exec -ti router_r5 curl get http://[2001:aaaa:3334::20]:80
+#docker exec -ti router_r5 curl get http://[2001:aaaa:3334::20]:80
+## tambien se usa el GET desde el navegador unicamente (no borrar default gateways)
+#GET http://[2001:aaaa:3334::20]:80
+
+##hago el ejemplo del strapi "quick start"
+##desde el container para ver lo que se ingresa uso desde cualquier container
+#docker exec -ti router_r5 curl get http://[2001:aaaa:3334::20]:80/product
+
+  api:
+##  build: ./strapi/.
+    image: strapi/strapi
+    container_name: strapi
+    environment:
+      - APP_NAME=strapi-app
+      - DATABASE_CLIENT=mongo
+      - DATABASE_HOST=db
+      - DATABASE_PORT=27017
+      - DATABASE_NAME=strapi
+      - DATABASE_USERNAME=
+      - DATABASE_PASSWORD=
+      - HOST=2001:aaaa:3335::20
+    ports:
+      - 1337:1337
+    volumes:
+      - ./volumes/strapi-app:/usr/src/api/strapi-app
+      #- /usr/src/api/strapi-app/node_modules
+    depends_on:
+      - db
+    restart: always
+    networks:
+      nrSTRAPINGINX:
+        ipv6_address: 2001:aaaa:3335::20
+
+  db:
+    image: mongo
+    container_name: mongoDB
+    environment:
+      - MONGO_INITDB_DATABASE=strapi
+    ports:
+      - 27017:27017
+    volumes:
+      - ./volumes/db:/data/db
+    restart: always
+    command: mongod  --ipv6 --bind_ip_all
+    networks:
+      nrSTRAPINGINX:
+        ipv6_address: 2001:aaaa:3335::30
+
+  b1:
+    build: ./bgp/.
+    container_name: router_bgp1
+    volumes:
+      - ./volumes/bgp/b1/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/bgp/b1/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/bgp/b1/bgpd.conf:/etc/quagga/bgpd.conf:ro
+      - ./volumes/bgp/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: bgp:20180426
+    privileged: true
+    ports:
+      #admin
+      - 10101:2601
+      #ospf ipv6
+      - 10103:2606
+      #bgp
+      - 10104:2605
+    networks:
+      rb1b2:
+        ipv6_address: 2001:b1b2::5
+      nr3b1:
+        ipv6_address: 2001:aaaa:1113::5
+      nr5b1:
+        ipv6_address: 2001:aaaa:1115::5
+      nr7b1:
+        ipv6_address: 2001:aaaa:1117::5
+
+  r3:
+    build: ./ospf/.
+    container_name: router_r3
+    volumes:
+      - ./volumes/ospf/r3/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/ospf/r3/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/ospf/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419
+    privileged: true
+    ports:
+      #admin
+      - 10331:2601
+      #ospf ipv6
+      - 10333:2606
+    networks:
+      nr3b1:
+        ipv6_address: 2001:aaaa:1113::10
+      nr3:
+        ipv6_address: 2001:aaaa:3333::10
+      nrR3NGINX:
+        ipv6_address: 2001:aaaa:3334::10
+
+  r5:
+    build: ./ospf/.
+    container_name: router_r5
+    volumes:
+      - ./volumes/ospf/r5/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/ospf/r5/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/ospf/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419
+    privileged: true
+    ports:
+      #admin
+      - 10551:2601
+      #ospf ipv6
+      - 10553:2606
+    networks:
+      nr5b1:
+        ipv6_address: 2001:aaaa:1115::10
+      nr5:
+        ipv6_address: 2001:aaaa:5555::10
+      nr57:
+        ipv6_address: 2001:aaaa:5577::10
+
+  r7:
+    build: ./ospf/.
+    container_name: router_r7
+    volumes:
+      - ./volumes/ospf/r7/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/ospf/r7/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/ospf/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    image: ospf:20180419
+    privileged: true
+    ports:
+      #admin
+      - 10771:2601
+      #ospf ipv6
+      - 10773:2606
+    networks:
+      nr7b1:
+        ipv6_address: 2001:aaaa:1117::10
+      nr7:
+        ipv6_address: 2001:aaaa:7777::10
+      nr57:
+        ipv6_address: 2001:aaaa:5577::20
+
+  h11:
+    build: ./hosts/.
+    container_name: host_h11
+    volumes:
+      - ./volumes/hosts/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+      - ./volumes/nginx/ssl:/usr/share/ca-certificates
+      - ./volumes/hosts/h11/borrar_dfg.sh:/script/borrar_dfg.sh:ro
+    privileged: true
+    tty: true
+    ports:
+      #admin
+      - 10111:2601
+    networks:
+      nr5:
+        ipv6_address: 2001:aaaa:5555::20
+
+  h13:
+    build: ./hosts/.
+    container_name: host_h13
+    volumes:
+      - ./volumes/hosts/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+      - ./volumes/nginx/ssl:/usr/share/ca-certificates
+      - ./volumes/hosts/h13/borrar_dfg.sh:/script/borrar_dfg.sh:ro
+    privileged: true
+    tty: true
+    ports:
+      #admin
+      - 10113:2601
+    networks:
+      nr7:
+        ipv6_address: 2001:aaaa:7777::20
+
+  bind:
+    build: ./dns/.
+    container_name: DNS_service
+    environment:
+      - ROOT_PASSWORD=ubuntu
+    volumes:
+       - ./volumes/webmin_datos:/data:rw
+    networks:
+      nr3:
+        ipv6_address: 2001:aaaa:3333::20
+#dns https://[2001:aaaa:3333::20]:10000/
+          
+networks:
+  rb1b2:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:b1b2::/64
+  nr3b1:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:aaaa:1113::/64
+  nr5b1:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:aaaa:1115::/64
+  nr7b1:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:aaaa:1117::/64
+  nr3:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:aaaa:3333::/64
+  nr5:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:aaaa:5555::/64
+  nr7:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:aaaa:7777::/64
+  nr57:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:aaaa:5577::/64
+  nrSTRAPINGINX:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:aaaa:3335::/64
+  nrR3NGINX:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 2001:aaaa:3334::/64

@@ -1,0 +1,28 @@
+$ttl 38400
+grupo16.unc.edu.ar.	IN	SOA	server. root.ubuntu.com. (
+			1529446078
+			10800
+			3600
+			604800
+			38400 )
+grupo16.unc.edu.ar.	IN	NS	server.
+nrSTRAPINGINX.nginx.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:4445::10
+nrR4NGINX.nginx.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:4443::20
+nrSTRAPINGINX.strapi.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:4445::20
+nrSTRAPINGINX.mongo.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:4445::30
+rb1b2.b2.grupo16.unc.edu.ar.	IN	AAAA	2001:b1b2::6
+nr4b2.b2.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:2224::6
+nr6b2.b2.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:2226::6
+nr8b2.b2.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:2228::6
+nr4b2.r4.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:2224::10
+nrR4NGINX.r4.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:4443::10
+nr4.r4.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:4444::10
+nr6b2.r6.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:2226::10
+nr6b2.r6.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:6666::10
+nr68.r6.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:6688::10
+nr8b2.r8.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:2228::10
+nr8.r8.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:8888::10
+nr68.r8.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:6688::20
+nr6.h12.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:6666::20
+nr8.h14.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:8888::20
+nr4.bind.grupo16.unc.edu.ar.	IN	AAAA	2001:bbbb:4444::20

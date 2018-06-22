@@ -1,0 +1,35 @@
+1)Levantar Docker con: docker-compose up
+
+2)Instalar certificados en hosts ejecutando script: ./install_certificated.sh
+
+3)Setear como servidor DNS por defecto en los hosts ejecutando el script : ./set_DNS_BIND.sh
+(borra los demas servidores DNS por defecto).
+
+4)Eliminar rutas por defecto y agregar default gateaways a los host ejecutando el script: default_GW.sh
+
+5)La base de datos tiene direccion (por NGINX): https://nrR3NGINX.nginx.grupo15.unc.edu.ar o https://nrR4NGINX.nginx.grupo16.unc.edu.ar, cuyas ipv6 son resultas por el servicio DNS
+
+6)Probar agregar algo a la base de datos a traves del host (suponiendo la existencia de una estrutura product con el campo name):
+docker exec -it host_h11 curl -d "name=holas" -X POST https://nrR3NGINX.nginx.grupo15.unc.edu.ar/product
+
+7) verificar punto anterior ingresando a strapi (a traves de NGINX) https://[2001:aaaa:3334::20]
+
+8)Obtener listado de elementos
+docker exec -it host_h11 curl -X GET  https://nrR3NGINX.nginx.grupo15.unc.edu.ar/product
+
+8)Obtener elemento con una determinada ID
+docker exec -it host_h11 curl -X GET  https://nrR3NGINX.nginx.grupo15.unc.edu.ar/product/<id_producto>
+
+9)Obtener listado de elementos ordenados segun campos (name por ejemplo)
+docker exec -it host_h11 curl -X GET  https://nrR3NGINX.nginx.grupo15.unc.edu.ar/product?_sort=name
+
+10) Usar PUT para actualizar una entrada (actualizamos campo name)
+docker exec -it host_h11 curl -X PUT  https://nrR3NGINX.nginx.grupo15.unc.edu.ar/product/<id_producto>
+
+11)Eliminar un elemento con una determinada ID
+docker exec -it host_h11 curl -X DELETE  https://nrR3NGINX.nginx.grupo15.unc.edu.ar/product/<id_producto>
+
+
+
+
+

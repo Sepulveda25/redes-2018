@@ -1,0 +1,54 @@
+-hacer el tutorial que dice en el inicio de la web de strapi
+-usar comando para agregar valores desde el navegador (no borrar default gateways):
+	curl -d "name=hola&description=jeje&price=399" -X POST http://[2001:aaaa:3334::20]/product
+-usar comando para agregar valores desde el container (antes eliminar default gategays con el script):
+	docker exec -ti router_r5 curl -X POST -d "name=hola&description=jeje&price=399" http://[2001:aaaa:3334::20]/product
+
+
+
+
+#LEVANTAR DOCKER
+#INSTALAR CERTIFICADOS EN LOS HOST MEDIANTE LA EJECUCION DEL SCRIPT 
+./install_certificated.sh
+#probar que funciona haciendo una soliitud a strapi por medio de nginx desde el host
+docker exec -it host_h11 curl -d "name=holas" -X POST https://[2001:aaaa:3334::20]/product
+docker exec -it host_h11 curl -d "name=holas" -X POST https://[2001:bbbb:4443::20]/product (esto es cuando estan conectadas las dos maquinas)
+
+#obtener elementos de una base de datos
+docker exec -it host_h12 curl -X GET https://[2001:aaaa:3334::20]/product
+
+
+
+
+
+
+
+
+
+
+One liner to stop / remove all of Docker containers:
+apt-get install dnsutils
+
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+
+
+
+
+agregar en webmin
+ 
+nrR3NGINX.nginx.grupo15.unc.edu.ar 2001:aaaa:3334::20
+
+DNS
+#EN LOS HOSTS
+docker exec -it host_h11 apt-get install dnsutils
+#si lo apuntamos funciona
+docker exec -it host_h11 dig @2001:aaaa:3333::20 nginx.grupo15.unc.edu.ar AAAA
+#ahora agregamos el dns (webmin en el host) reemplazamos todo lo que sta en el archivo
+docker exec -it host_h11 bash -c "echo nameserver 2001:aaaa:3333::20 > /etc/resolv.conf"
+#probamos ahora sin apuntar al servidor
+docker exec -it host_h11 dig nginx.grupo15.unc.edu.ar AAAA
+#cambiamos todos lo certificados por  nrR3NGINX.nginx.grupo15.unc.edu.aren vez de 2001:aaaa:3334::20
+docker exec -it host_h11 curl -d "name=holas" -X POST https://nrR3NGINX.nginx.grupo15.unc.edu.ar/product
+
+
